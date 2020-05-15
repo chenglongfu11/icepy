@@ -56,7 +56,7 @@ class ZoneStrc:
         script_list.append(zone_strc_endnote)
         res = ''.join(script_list)
 
-        print(res)
+        # print(res)
         return res
 
     def zone_strc_bsc(self, zone_name2):

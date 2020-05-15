@@ -32,27 +32,37 @@ class Readhtml:
             return html_path
 
 
-    def genehtml_path(self, folder, base, wwr):
-        idm = '.idm'
+    def genehtml_path(self, path):
 
-        file_path = folder + base + '_wwr' + str(wwr) + idm
+        path_list = path.split('\\')
+        folder = '\\'.join(path_list[:-1]) + '\\'
+        filename = path_list[-1].strip('.idm')
 
-        building = connectIDA2(file_path)
-        html_path = self.genehtml_bld(building, folder, base+'_wwr'+str(wwr))
+        building = connectIDA(path)
+        html_path = self.genehtml_bld(building, folder, filename)
         return  html_path
 
 
-    def multi_gene_html(self, folder, base, wwrs):
-        """
+    def multi_gene_html_path(self, paths):
+        html_path_ls = []
+        for p in paths:
+            html_path_ls.append(self.genehtml_path(p))
 
+        return html_path_ls
+
+
+    def multi_gene_html_wwrs(self, folder, base, wwrs):
+        """
         :param folder:
         :param base:
         :param wwrs:
         :return: a list of html paths
         """
         html_ls = []
+
         for wwr in wwrs:
-            res = self.genehtml_path(folder, base, wwr)
+            path = folder+base+'_wwr'+wwr+'.idm'
+            res = self.genehtml_path(path)
             if res:
                 html_ls.append(res)
 
@@ -207,6 +217,9 @@ class Readhtml:
 
 
 class TestReadHtml:
+    def __init__(self):
+        self.readHTML = Readhtml()
+
     def testGene(self):
         readHTML = Readhtml()
         wwrList = ['wwr0.1', 'wwr0.2', 'wwr0.3', 'wwr0.15', 'wwr0.25']
@@ -218,7 +231,13 @@ class TestReadHtml:
             file_path = folder+base_model+'_'+wwr+idm
             print(file_path)
             building = connectIDA2(file_path)
-            html_path = readHTML.genehtml(building, folder, base_model+'_'+wwr)
+            html_path = readHTML.genehtml_bld(building, folder, base_model+'_'+wwr)
+
+
+    def testGene_html(self):
+        html_ls = ['D:\\ide_mine\\changing\\ut1.idm','D:\\ide_mine\\changing\\ut1_5floor.idm',
+                   'D:\\ide_mine\\changing\\ut1_5floor_wwr0.2.idm']
+        self.readHTML.multi_gene_html_path(html_ls)
 
 
     def testDf(self):
@@ -233,6 +252,11 @@ class TestReadHtml:
         dfs = readHTML.multi_df_wwr(folder, base_model, wwrs)
         readHTML.parametric_anls(dfs)
 
+    def testGenehtml_bld(self):
+        apath = 'D:\\ide_mine\\changing\\generated_wwr0.2.idm'
+
+        building, pid = connectIDA(apath)
+        self.readHTML.genehtml_bld(building, 'D:\\ide_mine\\', 'generated_wwr0.2')
 
 
 
@@ -243,7 +267,8 @@ class TestReadHtml:
 
 if __name__ == "__main__":
     test1 = TestReadHtml()
-    test1.testDf()
+    # test1.testDf()
+    test1.testGenehtml_bld()
 
 
 

@@ -40,6 +40,7 @@ class ZoneClone:
 
 
 
+
     def clone_zone(self, building, ceiling_ht, num_floor):
         """
         Clone zone: known building, ceiling_ht, num_floor, we can clone zones
@@ -162,14 +163,19 @@ class ZoneClone:
 # Unit test
 class TestZoneClone:
     def testCloneBuilding(self, ceil_height, nfloor):
+        folder = 'd:\\ide_mine\\changing\\'
+        base_idm = 'ut1_1_wwr0.15'
+        building_path = folder + base_idm + '.idm'
+
         zoneClone = ZoneClone()
-        building_obj = connectIDA()
-        res = zoneClone.clone_zone(building_obj, ceil_height, nfloor)
-        print(res)
+        building_obj, pid = connectIDA(building_path)
+        res, new_name = zoneClone.clone_zone(building_obj, ceil_height, nfloor)
+        print(res, new_name)
+
 
     def testCur_ht(self):
         zoneClone = ZoneClone()
-        building_obj = connectIDA()
+        building_obj, pid = connectIDA()
         res = zoneClone.bld_cur_ht(building_obj, "Floor_36")
         print(res, type(res))
 
@@ -194,9 +200,9 @@ class TestZoneClone:
 if __name__ == "__main__":
     testZoneClone = TestZoneClone()
     testZoneClone.testCloneBuilding(2.6,3)
-    testZoneClone.testCur_ht()
-    testZoneClone.testCloneBuilding2(3)
-    testZoneClone.testCloneBuilding3(4)
+    # testZoneClone.testCur_ht()
+    # testZoneClone.testCloneBuilding2(3)
+    # testZoneClone.testCloneBuilding3(4)
 
 # def main(nf,fh):
 #

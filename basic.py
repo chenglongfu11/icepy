@@ -1,9 +1,9 @@
 from util import *
-import config
 from collections import defaultdict
 from os import path
 import psutil
 import time
+from config import ICE
 
 """ 
         General basic methods :  connectIDA, saveIDM, disconnectIDA, 
@@ -13,7 +13,7 @@ import time
 
 
 
-def connectIDA(building_path = config.BUILDING_PATH):
+def connectIDA(building_path = ICE.building_path):
     """
     :param: building_path
     :return: building:object
@@ -54,8 +54,19 @@ def saveIDM(building, apath='', unpacked = 1):                         #packed:0
 
     res1 = call_ida_api_function(ida_lib.saveDocument, building, apath.encode(), unpacked)            #b"D:\\ide_mine\\changing\\ut1_2.idm"
     if len(apath) > 0:
-        if path.exists(apath):
-            print('Successfully save file :', apath)
+        count = 0
+        while True:
+            if path.exists(apath):
+                print('Successfully save file :', apath)
+                break
+            else:
+                print('Unable to save the file to', apath)
+                if count ==5:
+                    break
+                count += 1
+                print('Attempt to save the file again.', 5-count)
+                time.sleep(2)
+
     return res1
 
 def disconnectIDA(building):
@@ -73,9 +84,10 @@ def runEnergySimu(building):
     return res
 
 def killprocess(pid):
+    time.sleep(2)
     p = psutil.Process(int(pid))
     p.terminate()
-    time.sleep(3)
+    time.sleep(2)
 
 
 # 应该新建dictionary 把东西列出来，避免重复寻找
@@ -137,8 +149,8 @@ def showChildrenByType(parent, child_type):
 #Unit test
 
 def main():
-    building = connectIDA()
-    res = runSimu(building)
+    building = connectIDA('D:\\ide_mine\\changing\\ut2_wwr0.1.idm')
+    res = saveIDM(building)
     print(res)
 
 

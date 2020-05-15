@@ -3,7 +3,8 @@ import json
 import time
 from win32 import win32process
 import os
-import config
+from config import ICE
+
 
 
 
@@ -11,7 +12,7 @@ import config
 # path_to_ice = "D:\\ida\\bin\\"
 # path_to_ice = "C:\\Program Files (x86)\\IDA\\bin\\"
 def start():
-    path_to_ice = config.APP_PATH
+    path_to_ice = ICE.ice_path
     command = path_to_ice + "ida-ice.exe \"" + path_to_ice + "ida.img\" -G 1"
     startObj = win32process.STARTUPINFO()
     ret = win32process.CreateProcess(None,command,None,None,0,0,None,None,startObj)
@@ -22,7 +23,7 @@ def start():
     os.environ['PATH'] = path_to_ice + os.pathsep + os.environ['PATH']
     return pid
 
-path_to_ice = config.APP_PATH
+path_to_ice = ICE.ice_path
 ida_lib = ctypes.CDLL(path_to_ice + 'idaapi2.dll')
 
 
@@ -198,18 +199,23 @@ def ida_checkerr():
 
 def ida_checkstatus():
   p = ctypes.create_string_buffer(5000)
-
+  count = 0
+  poll_result2 = None
   while True:
     status = ida_lib.getIDAStatus(p, len(p))
     try:
       poll_result2 = json.loads(p.value.decode("utf-8"))
       break
     except:
+      if count == 10:
+          print('No response from IDA ICE')
+          break
       time.sleep(1)
+      count += 1
       continue
 
 
-  poll_result2 = json.loads(p.value.decode("utf-8"))
+  # poll_result2 = json.loads(p.value.decode("utf-8"))
   poll_result = False
   if isinstance(poll_result2, list):
        poll_result = poll_result2[0]['value']

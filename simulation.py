@@ -7,14 +7,14 @@ import readhtml
 
 class Simulation:
 
-    def simulation_bld(self, building, path):
+    def simulation_bld(self, building, apath):
         """
             存在一个死循环，必须让simulation完成，不是特别好？
         :param building:
         :param path: used to track the program's name
         :return:
         """
-        file_name = path.split('\\')[-1]
+        file_name = apath.split('\\')[-1]
 
 
         while True:
@@ -82,35 +82,58 @@ class Simulation:
                 continue
 
 
+    def simulation_path(self, apath, ):
+        building, pid = connectIDA(apath)
+        res1, res2, res3 = self.simulation_bld(building, apath)
+        return apath
+
+
+
     # Call the building object from path and run the simulation
-    def simulation_path(self, folder, base, wwr):
+    def simulation_path(self, folder, fname, wwr):
         idm = '.idm'
-        path = folder + base + '_wwr' + str(wwr) + idm
-        building, pid = connectIDA(path)
-        res1, res2, res3 = self.simulation_bld(building, path)
+        apath = folder + fname + idm
+        building, pid = connectIDA(apath)
+        res1, res2, res3 = self.simulation_bld(building, apath)
+        compute_dict = {}
+        bld_dict ={}
         if res1:
-            dict = {'wwr_ratio': wwr, 'total_time': res2, 'simu_time': res3}
+            compute_dict = {'wwr_ratio': wwr, 'total_time': res2, 'simu_time': res3}
             bld_dict = {'wwr_ratio': wwr, 'building': building}
-            return dict, bld_dict
+            return compute_dict, bld_dict
+        else:
+            return compute_dict, bld_dict
 
 
     # Call the building object from path and run the simulation. If simulation is complete, html report is generated
-    def simulation_path_w_html(self, folder, base, wwr):
-        idm = '.idm'
-        path = folder + base + '_wwr' + str(wwr) + idm
-        filename = base+ '_wwr' + str(wwr)
-        building, pid = connectIDA(path)
-        res1, res2, res3 = self.simulation_bld(building, path)
+    def simulation_path_w_html(self, apath, wwr):
+        apath_list = apath.split('\\')
+        folder = '\\'.join(apath_list[:-1]) + '\\'
+        filename = apath_list[-1].strip('.idm')
+
+        dict ={}
+        html_dict = {}
+
+        building, pid = connectIDA(apath)
+        res1, res2, res3 = self.simulation_bld(building, apath)
+        time.sleep(3)
+
         readHTML = readhtml.Readhtml()
         if res1:
             dict = {'wwr_ratio': wwr, 'total_time': res2, 'simu_time': res3}
             html_path = readHTML.genehtml_bld(building, folder, filename)
-            html_dict = {'wwr_ratio': wwr, 'html': html_path}
+            html_dict = {}
+            if wwr != 0:
+                html_dict['wwr_ratio'] = wwr
+            html_dict['html'] = html_path
+            killprocess(pid)
+            return dict,html_dict
+        else:
             return dict,html_dict
 
 
 
-    def sequantial_simulation(self, folder, base, wwrs):
+    def sequantial_simulation(self, paths, wwrs):
         """
         :param folder:  'D:\\ide_mine\\changing\\'
         :param base: 'ut1_7floorwithWin'
@@ -121,8 +144,9 @@ class Simulation:
         """
         computational = []
         bld_dicts = []
-        for wwr in wwrs:
-            dict,bld = self.simulation_path(folder, base, wwr)
+        for i in range(len(paths)):
+
+            dict,bld = self.simulation_path(paths[i], wwrs[i])
             if dict:
                 computational.append(dict)
                 bld_dicts.append(bld)
@@ -130,8 +154,9 @@ class Simulation:
 
         return computational, bld_dicts
 
+
     # Run a branch of simulations according to wwrs
-    def sequantial_w_html(self, folder, base, wwrs):
+    def sequantial_w_html(self, paths, wwrs):
         """
 
         :param folder:
@@ -141,14 +166,18 @@ class Simulation:
         """
         computational = []
         html_dicts = []
-        for wwr in wwrs:
-            dict,bld = self.simulation_path_w_html(folder, base, wwr)
+        for i in range(len(wwrs)):
+            dict,bld = self.simulation_path_w_html(paths[i], wwrs[i])
             if dict:
                 computational.append(dict)
                 html_dicts.append(bld)
             time.sleep(2)
 
         return computational, html_dicts
+
+
+
+
 
 
 
@@ -175,14 +204,17 @@ class Simulation:
 
 
 class TestSimulation:
+    def __init__(self):
+        self.simulate = Simulation()
+
     def testOneSimu(self):
         folder = 'D:\\ide_mine\\changing\\'
         model = 'ut1_7floorwithWin_wwr0.2'
         idm = '.idm'
-        path = folder+model+idm
-        building, pid = connectIDA(path)
+        apath = folder+model+idm
+        building, pid = connectIDA(apath)
         simulate = Simulation()
-        res1,res2,res3 = simulate.simulation_bld(building, path)
+        res1,res2,res3 = simulate.simulation_bld(building, apath)
 
     def testComputational(self):
         computational = []
@@ -194,7 +226,7 @@ class TestSimulation:
         simulate = Simulation()
         simulate.computational_anls(computational)
 
-    def testSeqSimuWithComp(self):
+    def testSequential_(self):
         folder = 'D:\\ide_mine\\changing\\'
         wwrs = [0.1, 0.15, 0.2, 0.25, 0.3]
         base_model = 'ut1_7floorwithWin'
@@ -202,6 +234,10 @@ class TestSimulation:
         computational = simulate.seqSimu(folder,base_model,wwrs)
         simulate.computational_anls(computational)
 
+    def testOneSimuWhtml(self):
+        apath = 'D:\\ide_mine\\changing\\generated_wwr0.3.idm'
+        wwr = 0.2
+        self.simulate.simulation_path_w_html(apath, wwr)
 
 
 
@@ -210,6 +246,7 @@ class TestSimulation:
 
 if __name__ == "__main__":
     test1 = TestSimulation()
-    test1.testOneSimu()
+    # test1.testOneSimu()
     # test1.testComputational()
     # test1.testSeqSimuWithComp()
+    test1.testOneSimuWhtml()

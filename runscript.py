@@ -4,7 +4,7 @@ from zonestructure import winstrc, thermbdg, doorstrc
 import zoneclone
 from zonestructure import zonestrc
 from basic import *
-import schedulestrc
+
 
 
 class RunScript:
@@ -47,7 +47,9 @@ class RunScript:
 
         scriptList.append(endnote)
         ressss = ' '.join(scriptList)
+        print('-'*15)
         print('Generated script: ',ressss)
+        print('-'*15)
         return ressss
 
     def script_bsc(self):
