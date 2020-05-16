@@ -12,20 +12,34 @@
 
 from setuptools import setup, find_packages
 
+def readme():
+    with open('README.md') as f:
+        README = f.read()
+    return README    
+
+
 setup(
     name = "icepy",
-    version = "0.0.2",
+    version = "0.0.5",
     keywords = ("pip", "pathtool","timetool", "magetool", "mage"),
-    description = "automated simulation tool for IDA ICE 4.8",
-    long_description = "automated simulation tool for IDA ICE 4.8 Updated on 5/15/2020",
+    description = "Automated simulation tool for IDA ICE 4.8",
+    long_description = readme(),
+    long_description_content_type = "text/markdown",
     license = "MIT Licence",
-
+    classifiers = [
+        "Programming Language :: Python :: 3"
+    ],
     url = "https://github.com/chenglongfu11/icepy",
     author = "Clong",
     author_email = "fuc369702700@gmail.com",
 
-    packages = find_packages(),
+    packages = ["icepy", "icepy.zonestructure"],
     include_package_data = True,
     platforms = "any",
-    install_requires = []
+    install_requires = ["pandas", "plotly", "pymysql", "beautifulsoup4"],
+    entry_points={
+        "console_script":[
+            "icepy=icepy.modeleditor"
+        ]
+    }
 )
