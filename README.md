@@ -23,9 +23,9 @@ We have combined everything related into the github page- icepy. You can find:
 
 ### For a fresh user
 * Install Pypi package via your terminal: pip install icepy
-* Download Buildings folder and Tutorials.
-* User jupyter notebook to work with Tutorial 1, 2, 3 and 3+. 
-* It is optional for a developer to read through the source files.
+* Download Buildings folder and Tutorials folder.
+* Use jupyter notebook to work with Tutorial 1, 2, 3 and 3+. 
+* It is optional for a developer to walk through the source files.
 
 ## Contact
 Any problems, please feel free to contact the maintainer: Clong, fuc369702700@gmail.com
