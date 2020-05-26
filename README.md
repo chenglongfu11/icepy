@@ -22,6 +22,7 @@ We have combined everything related into the github page- icepy. You can find:
 * To submit to Pypi: Pypipackage folder.
 
 ### For a fresh user
+* Environment requirement: Python 3 32bit
 * Install Pypi package via your terminal: pip install icepy
 * Download Buildings folder and Tutorials folder.
 * Use jupyter notebook to work with Tutorial 1, 2, 3 and 3+. 
