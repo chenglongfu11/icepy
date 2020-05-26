@@ -23,6 +23,7 @@ We have combined everything related into the github page- icepy. You can find:
 
 ### For a fresh user
 * Environment requirement: Python 3 32bit
+* External package: pywin32, pandas, plotly 
 * Install Pypi package via your terminal: pip install icepy
 * Download Buildings folder and Tutorials folder.
 * Use jupyter notebook to work with Tutorial 1, 2, 3 and 3+. 
