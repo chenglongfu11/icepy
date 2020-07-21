@@ -1,16 +1,30 @@
-from util import *
-import config
-from zonestructure import winstrc, thermbdg, doorstrc
-import zoneclone
 from zonestructure import zonestrc
 from basic import *
+import csv
+import os
 
 
 
 class RunScript:
-    #TODO
-    def manage_csv(self, csv_path):
-        pass
+
+    # csv file to wins dict and doors dict
+    def read_csv(self, csv_path):
+        reader = csv.DictReader(open(csv_path))
+        items = list(reader)
+        for row in items:
+            keylist = []
+            for key in row.keys():
+                keylist.append(key)
+
+            for key in keylist:
+                if row[key] == '':
+                    del row[key]
+
+            if '锘縲all_name' in row:
+                row['wall_name'] = row.pop('锘縲all_name')
+        return items
+
+
 
     def apply_script(self, building, script):
         res = call_ida_api_function_j(ida_lib.runIDAScript, building, script.encode())
@@ -128,4 +142,18 @@ class RunScript:
     #     print(re)
     #     return re
 
+class TestCSV:
+    def test_read_csv(self):
+        fileDir = os.path.dirname(os.path.realpath('__file__'))
+        filename = os.path.join(fileDir, 'Buildings\\windows.csv')
 
+        runScript = RunScript()
+        wins = runScript.read_csv(filename)
+        print(wins)
+        doors=[]
+        runScript.generate_script(wins,doors)
+
+
+if __name__ == "__main__":
+    testCSV = TestCSV()
+    testCSV.test_read_csv()

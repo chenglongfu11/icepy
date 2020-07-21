@@ -4,17 +4,16 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import os.path
 from os import path
 
 """
-        Generate html reports -> Retrieve Energy Grand Total (kwh, kwh/m2) and form dataframes -> plot dataframes
+    Generate html reports -> Retrieve Energy Grand Total (kwh, kwh/m2) and Form dataframes -> Plot dataframes
 """
 
 class Readhtml:
     def genehtml_bld(self, building, folder, filename):
         """
-            Given building object, output the file
+            Given building object, output the file to target folder and file name
                 path = D:\\ide_mine\\changing\\
                 filename=ut1_7floorwithWin_wwr0.25
         """
@@ -90,6 +89,11 @@ class Readhtml:
 
     # Retrieve grand total from beautifulSoup
     def grand_total(self, html_path):
+        """
+        Retrieve grand total energy consumption data from html reports in dict
+        :param html_path:
+        :return: dict of energy consumption data
+        """
         htmlfile = open(html_path, 'r', encoding='utf-8')
         htmlhandle = htmlfile.read()
 
@@ -123,7 +127,7 @@ class Readhtml:
            )
 
 
-        :param path:
+        :param path: html file path
         :return: dataframe of delived enegy overview
         """
         try:

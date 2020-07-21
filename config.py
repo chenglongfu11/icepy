@@ -1,6 +1,6 @@
 #Configuration file
 """
-    TO RUN : add your own IDA ICE application path and building path
+    TO RUN : add your own IDA ICE application path, building path and mysql host
 """
 
 

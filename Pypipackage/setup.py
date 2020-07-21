@@ -6,7 +6,7 @@
 # Author: clong
 # Mail: fuc369702700@gmail.com
 # Created Time:  2020-5-7
-# Last Update: 2020-5-15
+# Last Update: 2020-7-21
 #############################################
 
 
@@ -20,9 +20,9 @@ def readme():
 
 setup(
     name = "icepy",
-    version = "0.0.5",
+    version = "0.0.6",
     keywords = ("pip", "pathtool","timetool", "magetool", "mage"),
-    description = "Automated simulation tool for IDA ICE 4.8",
+    description = "Automated simulation tool for IDA ICE",
     long_description = readme(),
     long_description_content_type = "text/markdown",
     license = "MIT Licence",
@@ -36,7 +36,7 @@ setup(
     packages = ["icepy", "icepy.zonestructure"],
     include_package_data = True,
     platforms = "any",
-    install_requires = ["pandas", "plotly", "pymysql", "beautifulsoup4"],
+    install_requires = ["pandas", "plotly", "pymysql", "beautifulsoup4", "csv", "numpy"],
     entry_points={
         "console_script":[
             "icepy=icepy.modeleditor"

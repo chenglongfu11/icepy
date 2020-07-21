@@ -82,7 +82,7 @@ class Simulation:
                 continue
 
 
-    def simulation_path(self, apath, ):
+    def simulation_path(self, apath):
         building, pid = connectIDA(apath)
         res1, res2, res3 = self.simulation_bld(building, apath)
         return apath

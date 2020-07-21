@@ -1,0 +1,21 @@
+IDA ICE API upadtes from EQUA:
+
+I have implemented a way to import IFC-files through the API (Well, you need to test how it works).
+ 
+There is a zip file at  http://www.equaonline.com/temp/ifcapi.zip
+ 
+It contains a new dll, a new manual and a patch-file. (the .dll is 64-bit. Do you need a 32-bit, let me know, and I will send it (if you want to put the .dll in the installation folder, it needs to be 32 bit).
+ 
+Put the patch file (the .fsl-file) in [installation folder]\lib\ice\ice.patches\
+ 
+ 
+Now you should be able to use:
+ 
+long openIFCFile(char *path, long mergeWindows, long keepIntersectingSpaces, long ingoreRoof, char *out, int out_len)
+Imports the .ifc file specified by path. The three parameters mergeWindows keepIntersectingSpaces and ignoreRoof can be set to 0 (do not use) or 1 (use). The parameters are from the IFC import options in IDA ICE.
+ 
+Returns the imported building object.
+ 
+ 
+Check what you want to set the parameters to in the IDA ICE GUI version of the IFC import.
+ 

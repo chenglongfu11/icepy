@@ -1,0 +1,1 @@
+To enable get and set attributes in json format with IDA ICE API, add dom-conv.fsl into yourIDAICE/lib/ice/ice.patches

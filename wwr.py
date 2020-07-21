@@ -3,7 +3,7 @@ import math
 import runscript
 
 class WWR:
-
+    #TODO Compare via API and via Lisp
     def wwr1(self, building, wwr_val, wall_width_list, _ceiling_ht):
         """
          The first method to change wwr ratio is via API functions
@@ -27,7 +27,7 @@ class WWR:
                 # wins = call_ida_api_function(ida_lib.getWindows, wall_val)
                 wins = call_ida_api_function(ida_lib.getChildrenOfType, wall_val, b"WINDOW")
 
-                # Calculate X,Y,DX,DY
+                # Calculate X,Y,DX,DY - proportional
                 sqrt_wwr = math.sqrt(wwr_val)
                 win_wd = wall_width_list[i] * sqrt_wwr
                 win_ht = _ceiling_ht*sqrt_wwr
@@ -71,7 +71,7 @@ class WWR:
 
     def wwr2(self, building, wwr_val, wall_width_list, _ceiling_ht, folder, idm_name):
         """
-         The second method is to use the Lisp scripting method to change wwr ratio values.
+         The second method is to use the Lisp scripting method to change wwr ratio values and change windows' size accordingly
          The speed is fast and easy to use
         :param building:
         :param wwr_val:
@@ -154,7 +154,7 @@ class WWR:
     def wwr2_fixed_ht(self, building, wwr_val, wall_width_list, _ceiling_ht, folder, idm_name, new =True):
         """
          The second method is to use the Lisp scripting method to change wwr ratio values.
-         The speed is fast and easy to use
+         The speed is fast and easy to use. Another significant advantage is that it can add new windows.
         :param building:
         :param wwr_val:
         :param wall_width_list:

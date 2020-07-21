@@ -1,0 +1,8 @@
+This is a set of files to enable operation of 64-bit version of IDA ICE API.
+(Oleksii Pasichnyi, 2020-07-01)
+
+1. Put the patch file (the .fsl-file) in [installation folder]\lib\ice\ice.patches\
+2. Ensure that Microsoft Visual C++ 2015 - 2019 Redistributable is installed to have VCRUNTIME140_1.dll in the windows/system32 folder
+https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
+3. Add libzmq-mt-4_3_1.dll and idaapi2.dll (do not mix it with 32-bit version in IDA ICE bin folder) to the script folder
+4. Use the modified util.py in import statements for any scripts requiring IDA ICE API.
