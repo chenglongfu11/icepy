@@ -124,11 +124,24 @@ def showChildrenListValue(parent):
     str(valueList)
     return valueList
 
+# def showSingleChild(parent, child_name):
+#     element = ida_get_named_child(parent, child_name)
+#     element_val = ida_get_value(element)
+#     print("The current %s value is %f, and the type is %s" %(child_name,element_val,type(element_val)))
+#     return element
 def showSingleChild(parent, child_name):
     element = ida_get_named_child(parent, child_name)
-    element_val = ida_get_value(element)
-    print("The current %s value is %f, and the type is %s" %(child_name,element_val,type(element_val)))
-    return element
+    element_val = None
+    print(element)
+    try:
+        element_val = ida_get_value(element)
+        # print("The current %s value is %s, and the type is %s" % (child_name, tuple(element_val), type(element_val)))
+        print(element_val)
+    except:
+        pass
+
+    return element, element_val
+
 
 def showChildrenByType(parent, child_type):
     """
@@ -137,13 +150,23 @@ def showChildrenByType(parent, child_type):
     :param child_type: ZONE, WINDOW, DET-WINDOW, OPENING
     :return: children: list
     """
+    print('Known types: ZONE, WINDOW, DET-WINDOW, OPENING')
     children = call_ida_api_function(ida_lib.getChildrenOfType, parent,child_type.encode())
     for i, val in enumerate(children):
         print("Child %s is %s" %(i,val))
 
     return children
 
+def setAttribute(object, text):
+    """
 
+    :param object:
+    :param text: follow the json format --  "{\"type\":\"number\",\"value\":" + "{0:.1f}".format(new_dx) + "}"
+    :return:
+    """
+    # text_to_send = "{\"type\":\"number\",\"value\":" + "{0:.1f}".format(new_dx) + "}"
+    res = call_ida_api_function(ida_lib.setAttribute, b"VALUE", object, text.encode())
+    return res
 
 
 #Unit test

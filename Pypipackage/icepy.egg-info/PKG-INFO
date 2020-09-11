@@ -1,45 +1,52 @@
 Metadata-Version: 2.1
 Name: icepy
-Version: 0.0.5
-Summary: Automated simulation tool for IDA ICE 4.8
+Version: 0.0.7
+Summary: Automated simulation tool for IDA ICE
 Home-page: https://github.com/chenglongfu11/icepy
 Author: Clong
 Author-email: fuc369702700@gmail.com
 License: MIT Licence
-Description: # web_ice
-        # Welcome to icepy
+Description: # Welcome to icepy
         
-        ## To run, read Turtorials>Turtoiral 1.
+        Icepy is a Python package as an automated tool for IDA ICE. It is  programmed in Python and some functions utilized external Pypi packages. Icepy is available publicly as a Pypi
+        package in https://pypi.org/project/icepy/. The latest version as of July 21, 2020 is 0.0.6. Starting from baseline models, users can use icepy to search and modify IDA ICE building energy models.
+        More specially, here is a list of available functions:
         
-        ### I will update the readme part later
+        * Make changes of IDM models in zones, windows and doors.
+        * Make changes of windows according to WWR.
+        * Automated simulation for a number of models.
+        * Generate simulation reports and read data
+        
+        
+        ## Now, let's discover icepy
+        
+        ### Github repository classification
+        We have combined everything related into the github page- icepy. You can find:
+        
+        * Source files: .py files and zonestructure folder.
+        * Tuturoials folder.
+        * Example IDM models: Buildings folder.
+        * API update files: API update folder.
+        * To submit to Pypi: Pypipackage folder.
+        
+        ### For a fresh user
+        * Install Pypi package via your terminal: pip install icepy
+        * Download files from Buildings folder and Tutorials foler.
+        * The list of useful functions are Icepy function.ipynb.
+        * User jupyter notebook to work with Tutorial 1, 2, 3 and 3+. 
+        * It is optional for a developer to read through the source files.
+        
+        ## Contact
+        Any problems, please feel free to contact the maintainer: Clong, fuc369702700@gmail.com
+        
+        
+        --------------------------
+        
         
         Kindly regards,
         
-        Chenglong Fu
+        Clong
         
-        fuc369702700@gmail.com
-        
-        
-        
-        
-        ### ----------------Previous-----------------
-        
-        
-        ## Updates of functions:
-        1. Zone Clone
-        2. Add windows and doors to zones ( Known gemotries, dimensions )
-        
-        ## TO RUN
-        1. Install IDA ICE 4.8 
-        2. Windows Services Management Tool (system level)  -> start 'IDAMessageBrokerService -> Optional: Startup Type: Automatic
-        3. Open the project
-        4. Go to config.py: change APP_PATH and BUILDING_PATH. 
-        5. Zone Clone and windows add function:  
-          (1) BUILDING_PATH : your_project(web_ice)/buildings/ut1.idm  
-                                                (2) go to runScript.py and run it  
-                                               (3) You can see the IDA ICE GUI and moniter the automatic constrction in 3D tab directly  
-        
-Keywords: pip,pathtool,timetool,magetool,mage
 Platform: any
 Classifier: Programming Language :: Python :: 3
 Description-Content-Type: text/markdown

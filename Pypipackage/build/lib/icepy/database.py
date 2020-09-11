@@ -17,7 +17,7 @@ class DB():
             database = database,
             charset = charset
         )
-        # 获取一个光标
+        # Get a cursor
         self.cursor = self.db.cursor()
 
 
@@ -30,11 +30,10 @@ class DB():
 
     def createTable_baseline(self):
     #Create table
-        self.cursor.execute("DROP TABLE IF EXISTS baseline")
+        self.cursor.execute("DROP TABLE IF EXISTS building")
         sql = """CREATE TABLE baseline (
             ID INT AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
             NAME  VARCHAR(45),
-            HEIGHT FLOAT ,
             PATH VARCHAR(255),
             PARENT  TINYINT"""
 
@@ -42,14 +41,14 @@ class DB():
 
     def createTable_simulation_info(self):
     #Create table
-        self.cursor.execute("DROP TABLE IF EXISTS simulation_info")
-        sql = """CREATE TABLE simulation_info (
+        self.cursor.execute("DROP TABLE IF EXISTS model")
+        sql = """CREATE TABLE model (
             ID INT AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
             BID INT,
             NAME  VARCHAR(100),
             HEIGHT FLOAT ,
             CEILING_HT FLOAT,
-            SIMU_TIME DATETIME_INTERVAL_CODE,
+            DATETIME DATETIME_INTERVAL_CODE,
             PATH VARCHAR(255),
             NOTE VARCHAR(100)
             PARENT  TINYINT"""
@@ -58,10 +57,9 @@ class DB():
 
     def createTable_simu_results(self):
     #Create table
-        self.cursor.execute("DROP TABLE IF EXISTS simu_results")
-        sql = """CREATE TABLE simu_results (
+        self.cursor.execute("DROP TABLE IF EXISTS simulation")
+        sql = """CREATE TABLE simulation (
             ID INT AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
-            BID INT,
             SID INT,
             WWR_RATIO FLOAT ,
             TOTAL_TIME FLOAT,
@@ -74,12 +72,12 @@ class DB():
         self.cursor.execute(sql)
 
     # Insert the baseline model and return bid
-    def insert_baseline(self, name, height, path, table_name = "`baseline`"):
-        sql1 = "INSERT IGNORE INTO " + table_name + " (name, height, path) VALUES (%s, %s, %s)"
-        sql1 = "insert into " + table_name + " (id, name, height, path)\
-                select null, %s, %s, %s from DUAL\
-                where not exists (select id from baseline where name = %s)"
-        value1 = (name, height, path, name)
+    def insert_building(self, name, path, table_name = "`building`"):
+        sql1 = "INSERT IGNORE INTO " + table_name + " (name, path) VALUES (%s, %s)"
+        sql1 = "insert into " + table_name + " (id, name, path)\
+                select null, %s, %s from DUAL\
+                where not exists (select id from building where name = %s)"
+        value1 = (name, path, name)
         self.cursor.execute(sql1, value1)
 
         try:
@@ -98,15 +96,15 @@ class DB():
             print('-' * 60)
             traceback.print_exc(file=sys.stdout)
             print('-' * 60)
-            print('The baseline name already exists.')
+            print('The building name already exists.')
             return False
 
     # Insert simulation inforation ,return sid
-    def insert_simulation_info(self, bid, height, ceiling_ht, num_floor, path, name, note, table_name = "`simulation_info`"):
+    def insert_model(self, bid, height, ceiling_ht, num_floor, path, name, note, table_name = "`model`"):
         now = datetime.datetime.now()
         formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
 
-        sql1 = "INSERT INTO " + table_name + " (bid,height, ceiling_ht, num_floor, path, name, simu_time, note) " \
+        sql1 = "INSERT INTO " + table_name + " (bid,height, ceiling_ht, num_floor, path, name, datetime, note) " \
                                              "VALUES (%s,%s,%s,%s,%s,%s,%s, %s)"
         value1 = (bid, height, ceiling_ht, num_floor, path, name, formatted_date, note)
         try:
@@ -118,14 +116,14 @@ class DB():
             self.db.rollback()
             return False
 
-
-    def insert_simu_results(self, sid, bid, wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path,
+    # Insert simulation results
+    def insert_simulation(self, sid, wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path,
                   table_name="`simu_results`"):  # fisrt non-defalut argument, then default argument
 
 
-        sql2 = "INSERT INTO " + table_name + " (sid,bid, wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path) \
-                    VALUES (%s,%s, %s, %s, %s, %s, %s, %s)"
-        value = (sid, bid, wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path)
+        sql2 = "INSERT INTO " + table_name + " (sid,wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path) \
+                    VALUES (%s,%s, %s, %s, %s, %s, %s)"
+        value = (sid, wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path)
 
 
         try:
@@ -144,10 +142,10 @@ class DB():
 
     def insert_computational_df_html(self, base, building_ht, folder, floor_ht, num_floors,new_name, note, computational, dfs, html_dicts):
 
-        bid = self.insert_baseline(base, building_ht, folder + base + '.idm')
+        bid = self.insert_building(base, folder + base + '.idm')
 
         #  bid, height, ceiling_ht, num_floor, path, name, note
-        sid = self.insert_simulation_info(bid, building_ht, floor_ht, num_floors, folder, new_name, note)
+        sid = self.insert_model(bid, building_ht, floor_ht, num_floors, folder, new_name, note)
 
         # sid, bid, wwr_ratio, total_time, simu_time, kwh, kwh_per_m2, path,
         for x in computational:
@@ -166,12 +164,13 @@ class DB():
                     kwh = float(a['kwh'])
                     kwh_per = float(a['kwh/m2'])
 
-            print(sid, bid, wwr_ratio, x['total_time'], x['simu_time'], kwh, kwh_per, path)
-            self.insert_simu_results(sid, bid, wwr_ratio, x['total_time'], x['simu_time'], kwh, kwh_per, path)
+            print(sid, wwr_ratio, x['total_time'], x['simu_time'], kwh, kwh_per, path)
+            self.insert_simulation(sid, wwr_ratio, x['total_time'], x['simu_time'], kwh, kwh_per, path)
 
 
 
-    def query_baseline(self, name, table_name = "`baseline`"):
+
+    def query_building(self, name, table_name = "`building`"):
         sql = "select * from "+ table_name + " where `name` = %s"
         value = (name,)
 
@@ -181,8 +180,7 @@ class DB():
             a = self.cursor.fetchone()
             dict['bid'] = a[0]
             dict['name'] = a[1]
-            dict['height'] = a[2]
-            dict['path'] = a[3]
+            dict['path'] = a[2]
             return dict
         except:
             # 如果发生错误则回滚
@@ -192,7 +190,7 @@ class DB():
             traceback.print_exc(file=sys.stdout)
             print('-' * 60)
 
-    def query_simulation_info(self, name, table_name = "`simulation_info`"):
+    def query_model(self, name, table_name = "`model`"):
         sql = "select * from "+ table_name + " where `name` = %s"
         value = (name,)
 
@@ -205,7 +203,7 @@ class DB():
             dict['height'] = a[2]
             dict['ceiling_ht'] = a[3]
             dict['num_floor'] = a[4]
-            dict['simu_time'] = a[5]
+            dict['datetime'] = a[5]
             dict['path'] = a[6]
             dict['name'] = a[7]
 
@@ -218,7 +216,7 @@ class DB():
             traceback.print_exc(file=sys.stdout)
             print('-' * 60)
 
-    def query_simu_results(self, sid, table_name = "`simu_results`"):
+    def query_simulation(self, sid, table_name = "`simulation`"):
         sql = "select * from "+ table_name + " where `sid` = %s"
         value = (sid,)
 
@@ -228,13 +226,12 @@ class DB():
             a = self.cursor.fetchone()
             dict['id'] = a[0]
             dict['sid'] = a[1]
-            dict['bid'] = a[2]
-            dict['wwr_ratio'] = a[3]
-            dict['total_time'] = a[4]
-            dict['simu_time'] = a[5]
-            dict['kwh'] = a[6]
-            dict['kwh_per_m2'] = a[7]
-            dict['path'] = a[8]
+            dict['wwr_ratio'] = a[2]
+            dict['total_time'] = a[3]
+            dict['simu_time'] = a[4]
+            dict['kwh'] = a[5]
+            dict['kwh_per_m2'] = a[6]
+            dict['path'] = a[7]
 
             return dict
         except:
@@ -269,26 +266,24 @@ class TestDBHelper():
 
     # test insert_baseline
     def testInsertBaseline(self):
-        return self.db.insert_baseline("ut1", 22.5, 'D:\\ide_mine\\changing\\ut1.idm')
+        return self.db.insert_building("ut1", 22.5, 'D:\\ide_mine\\changing\\ut1.idm')
 
     # test insert_simulation_info
     def testInsertSimulation_info(self):
-        return self.db.insert_simulation_info(1,22.5, 3, 5, 'D:\\ide_mine\\changing\\ut1_5floor.idm', 'ut1_5floor')
+        return self.db.insert_model(1,22.5, 3, 5, 'D:\\ide_mine\\changing\\ut1_5floor.idm', 'ut1_5floor')
 
     # test insert_simu_results
     def testInsertSimuResults(self):
-        return self.db.insert_simu_results(1,1, 0.45, 227.111, 225.111, 532992, 182.5, 'D:\\ide_mine\\changing\\ut1_5floor_0.45.idm')
+        return self.db.insert_simulation(1,1, 0.45, 227.111, 225.111, 532992, 182.5, 'D:\\ide_mine\\changing\\ut1_5floor_0.45.idm')
 
     def testQueryBaseline(self):
-        return self.db.query_baseline('ut1')
+        return self.db.query_building('ut1')
 
     def testQuerySimu_results(self):
-        return self.db.query_simu_results('1')
+        return self.db.query_simulation('1')
 
     def test_sql2df(self):
-        print(self.db.sql2df("`simu_results`"))
-
-
+        print(self.db.sql2df("`simulation`"))
 
 
 if __name__ == '__main__':

@@ -4,13 +4,27 @@ from icepy.zonestructure import winstrc, thermbdg, doorstrc
 import icepy.zoneclone as zoneclone
 from icepy.zonestructure import zonestrc
 from icepy.basic import *
-
+import csv
+import os
 
 
 class RunScript:
-    #TODO
-    def manage_csv(self, csv_path):
-        pass
+    # csv file to wins dict and doors dict
+    def read_csv(self, csv_path):
+        reader = csv.DictReader(open(csv_path))
+        items = list(reader)
+        for row in items:
+            keylist = []
+            for key in row.keys():
+                keylist.append(key)
+
+            for key in keylist:
+                if row[key] == '':
+                    del row[key]
+
+            if '锘縲all_name' in row:
+                row['wall_name'] = row.pop('锘縲all_name')
+        return items
 
     def apply_script(self, building, script):
         res = call_ida_api_function_j(ida_lib.runIDAScript, building, script.encode())

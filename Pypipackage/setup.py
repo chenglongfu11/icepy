@@ -20,8 +20,7 @@ def readme():
 
 setup(
     name = "icepy",
-    version = "0.0.6",
-    keywords = ("pip", "pathtool","timetool", "magetool", "mage"),
+    version = "0.0.7",
     description = "Automated simulation tool for IDA ICE",
     long_description = readme(),
     long_description_content_type = "text/markdown",
@@ -36,7 +35,7 @@ setup(
     packages = ["icepy", "icepy.zonestructure"],
     include_package_data = True,
     platforms = "any",
-    install_requires = ["pandas", "plotly", "pymysql", "beautifulsoup4", "csv", "numpy"],
+    install_requires = ["pandas", "plotly", "pymysql", "beautifulsoup4", "numpy"],
     entry_points={
         "console_script":[
             "icepy=icepy.modeleditor"
